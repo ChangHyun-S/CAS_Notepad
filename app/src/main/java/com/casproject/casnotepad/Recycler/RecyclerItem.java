@@ -1,14 +1,16 @@
-package com.casproject.casnotepad.Realm;
+package com.casproject.casnotepad.Recycler;
 
 import io.realm.RealmObject;
+import io.realm.annotations.RealmClass;
 import io.realm.annotations.Required;
 
-public class Notepad extends RealmObject {
+@RealmClass
+public class RecyclerItem extends RealmObject {
     @Required
     private String title; // 제목
     private String content; // 내용
 
-    public Notepad(String title, String content) {
+    public RecyclerItem(String title, String content) {
         this.title = title;
         this.content = content;
     }

@@ -5,16 +5,23 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.casproject.casnotepad.Realm.Notepad;
+import com.casproject.casnotepad.Recycler.RecyclerItem;
+import com.casproject.casnotepad.Recycler.RecyclerAdapter;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import io.realm.Realm;
 
 public class MainActivity extends AppCompatActivity {
     Intent intent;
     private Realm realm;
-    private Notepad notepad;
+    private RecyclerItem recyclerItem;
+    private RecyclerAdapter recyclerAdapter;
     private FloatingActionButton floatingAddButton;
+
+    public List<RecyclerItem> list = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,12 +31,13 @@ public class MainActivity extends AppCompatActivity {
         Realm.init(this);
         realm = Realm.getDefaultInstance();
 
+        floatingAddButton = findViewById(R.id.notepadAdd);
         floatingAddButton.setOnClickListener( v -> {
-            emptyNotepad();
+            startNotepad();
         });
     }
 
-    private void emptyNotepad() {
+    private void startNotepad() {
         intent = new Intent(getApplicationContext(), NotepadActivity.class);
         startActivity(intent);
     }
