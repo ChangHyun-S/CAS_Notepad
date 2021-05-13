@@ -44,7 +44,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
                     modIntent.putExtras(bundle);
                     modIntent.putExtra("title", recyclerItems.get(getBindingAdapterPosition()).getTitle());
                     modIntent.putExtra("content", recyclerItems.get(getBindingAdapterPosition()).getContent());
-                    modIntent.putExtra("position", recyclerItems.get(getBindingAdapterPosition()).toString());
+                    modIntent.putExtra("URI", recyclerItems.get(getBindingAdapterPosition()).getURI());
 
                     context.startActivity(modIntent);;
                 }
@@ -63,7 +63,6 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
     public RecyclerAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_recyclerview, parent, false);
         RecyclerAdapter.ViewHolder viewHolder = new RecyclerAdapter.ViewHolder(view);
-
 
         return viewHolder;
     }

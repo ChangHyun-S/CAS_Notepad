@@ -2,10 +2,14 @@ package com.casproject.casnotepad;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.widget.Toast;
 
@@ -38,10 +42,12 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         test();
+        permission();
 
-        floatingAddButton.setOnClickListener( v -> {
+        floatingAddButton.setOnClickListener(v -> {
             startNotepad();
         });
+
     }
 
     private void test() {
@@ -59,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
         RealmResults<RecyclerItem> realmResults = realm.where(RecyclerItem.class).findAllAsync();
 
         for (RecyclerItem recyclerItem : realmResults) {
-            list.add(new RecyclerItem(recyclerItem.getTitle(), recyclerItem.getContent()));
+            list.add(new RecyclerItem(recyclerItem.getTitle(), recyclerItem.getContent(), recyclerItem.getURI()));
             recyclerAdapter = new RecyclerAdapter(this, list);
         }
         recyclerView.setAdapter(recyclerAdapter);
@@ -72,19 +78,18 @@ public class MainActivity extends AppCompatActivity {
 
 
         if (resultCode == RESULT_OK) {
-            Toast.makeText(this, "dbdbdbdbdb", Toast.LENGTH_SHORT).show();
             String title = data.getStringExtra("title");
             String content = data.getStringExtra("content");
-            // int position = data.getIntExtra("position", -1);
-
+            String uri = data.getStringExtra("URI");
 
             realm.beginTransaction();
             recyclerItem = realm.createObject(RecyclerItem.class);
             recyclerItem.setTitle(title);
             recyclerItem.setContent(content);
+            recyclerItem.setURI(uri);
             realm.commitTransaction();
 
-            list.add(new RecyclerItem(title, content));
+            list.add(new RecyclerItem(title, content, uri));
             recyclerAdapter = new RecyclerAdapter(this, list);
             recyclerView.setAdapter(recyclerAdapter);
         }
@@ -94,4 +99,14 @@ public class MainActivity extends AppCompatActivity {
         intent = new Intent(getApplicationContext(), NotepadActivity.class);
         startActivityForResult(intent, 1);
     }
+
+    private void permission() {
+        if (checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+        }
+        else {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+        }
+    }
+
+
 }

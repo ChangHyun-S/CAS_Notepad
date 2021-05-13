@@ -38,15 +38,16 @@
 
     <ImageView
         android:id="@+id/mImageView"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/mEditTextTitle"
-        tools:srcCompat="@tools:sample/avatars" />
+        android:scaleType="centerInside"
+        android:src="@drawable/ic_launcher_background" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/mGuideline"
@@ -74,5 +75,25 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/mButtonEdit"
         app:layout_constraintTop_toTopOf="@+id/mGuideline" />
+
+    <Button
+        android:id="@+id/mButtonCamera"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Camera"
+        app:layout_constraintBottom_toBottomOf="@id/mButtonGallery"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/mImageView"
+        app:layout_constraintTop_toTopOf="@+id/mEditTextTitle" />
+
+    <Button
+        android:id="@+id/mButtonGallery"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Gallery"
+        app:layout_constraintBottom_toTopOf="@+id/mEditTextContent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/mImageView"
+        app:layout_constraintTop_toTopOf="@id/mButtonCamera" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
