@@ -33,8 +33,10 @@
         android:text="Content"
         app:layout_constraintBottom_toTopOf="@+id/mGuideline"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/mImageView" />
+        app:layout_constraintTop_toBottomOf="@+id/mImageView"
+        app:layout_constraintVertical_bias="1.0" />
 
     <ImageView
         android:id="@+id/mImageView"
@@ -59,10 +61,10 @@
         android:id="@+id/mButtonEdit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="SAVE"
+        android:text="EDIT"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/mButtonCancel"
+        app:layout_constraintEnd_toStartOf="@id/mButtonDelete"
         app:layout_constraintTop_toTopOf="@+id/mGuideline" />
 
     <Button
@@ -72,7 +74,17 @@
         android:text="CANCEL"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/mButtonEdit"
+        app:layout_constraintStart_toEndOf="@+id/mButtonDelete"
+        app:layout_constraintTop_toTopOf="@+id/mGuideline" />
+
+    <Button
+        android:id="@+id/mButtonDelete"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Delete"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/mButtonCancel"
+        app:layout_constraintStart_toEndOf="@id/mButtonEdit"
         app:layout_constraintTop_toTopOf="@+id/mGuideline" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
