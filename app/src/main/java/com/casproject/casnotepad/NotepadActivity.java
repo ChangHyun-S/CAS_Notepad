@@ -35,8 +35,9 @@ public class NotepadActivity extends AppCompatActivity {
     private ImageView imageView;
     private static final int PICK_FROM_CAMERA = 0;
     private static final int PICK_FROM_ALBUM = 1;
+    Realm realm;
 
-    String uri1 = null;
+    String imagePath = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,11 +75,10 @@ public class NotepadActivity extends AppCompatActivity {
     }
 
     private void saveButtonClick() {
-
         Intent save = new Intent(getApplicationContext(), MainActivity.class);
         save.putExtra("title", titleText.getText().toString());
         save.putExtra("content", contentText.getText().toString());
-        save.putExtra("URI", uri1);
+        save.putExtra("URI", imagePath);
         setResult(RESULT_OK, save);
 
         Toast.makeText(this, "SAVE", Toast.LENGTH_SHORT).show();
@@ -99,7 +99,7 @@ public class NotepadActivity extends AppCompatActivity {
 //        startActivityForResult(intent, PICK_FROM_CAMERA);
     }
 
-    // 갤러리 ㅂ튼
+    // 갤러리 버튼
     private void mGalleryButtonClick() {
         Intent intent = new Intent(Intent.ACTION_PICK);
         intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
@@ -120,7 +120,7 @@ public class NotepadActivity extends AppCompatActivity {
         );
 
         // Save a file: path for use with ACTION_VIEW intents
-        uri1 = image.getAbsolutePath();
+        imagePath = image.getAbsolutePath();
         return image;
     }
 
@@ -142,14 +142,14 @@ public class NotepadActivity extends AppCompatActivity {
                         photoFile);
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
                 startActivityForResult(takePictureIntent, PICK_FROM_CAMERA);
-                uri1 = photoURI.toString();
+                imagePath = photoURI.toString();
             }
         }
     }
 
     private void galleryAddPic() {
         Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-        File f = new File(uri1);
+        File f = new File(imagePath);
         Uri contentUri = Uri.fromFile(f);
         mediaScanIntent.setData(contentUri);
         this.sendBroadcast(mediaScanIntent);
@@ -164,12 +164,12 @@ public class NotepadActivity extends AppCompatActivity {
             Uri selectedImageUri = data.getData();
             imageView.setImageURI(selectedImageUri);
 
-            uri1 = selectedImageUri.toString();
+            imagePath = selectedImageUri.toString();
         }
         else if (requestCode == PICK_FROM_CAMERA && resultCode == RESULT_OK) {
             galleryAddPic();
 //            Log.d("HERE@@", data.getData().toString())
-            imageView.setImageURI(Uri.parse(uri1));
+            imageView.setImageURI(Uri.parse(imagePath));
 
             // uri1 = selectedImageUri.toString();
         }

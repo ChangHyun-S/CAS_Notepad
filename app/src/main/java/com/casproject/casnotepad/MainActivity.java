@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
         RealmResults<RecyclerItem> realmResults = realm.where(RecyclerItem.class).findAllAsync();
 
         for (RecyclerItem recyclerItem : realmResults) {
-            list.add(new RecyclerItem(recyclerItem.getTitle(), recyclerItem.getContent(), recyclerItem.getURI()));
+            list.add(new RecyclerItem(recyclerItem.getTitle(), recyclerItem.getContent(), recyclerItem.getURI(), recyclerItem.getId()));
             recyclerAdapter = new RecyclerAdapter(this, list);
         }
         recyclerView.setAdapter(recyclerAdapter);
@@ -83,13 +83,16 @@ public class MainActivity extends AppCompatActivity {
             String uri = data.getStringExtra("URI");
 
             realm.beginTransaction();
+            Number maxId = realm.where(RecyclerItem.class).max("id");
+            int id = maxId == null ? 1 : maxId.intValue() + 1;
             recyclerItem = realm.createObject(RecyclerItem.class);
             recyclerItem.setTitle(title);
             recyclerItem.setContent(content);
             recyclerItem.setURI(uri);
+            recyclerItem.setId(id);
             realm.commitTransaction();
 
-            list.add(new RecyclerItem(title, content, uri));
+            list.add(new RecyclerItem(title, content, uri, id));
             recyclerAdapter = new RecyclerAdapter(this, list);
             recyclerView.setAdapter(recyclerAdapter);
         }

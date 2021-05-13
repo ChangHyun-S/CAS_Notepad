@@ -45,6 +45,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
                     modIntent.putExtra("title", recyclerItems.get(getBindingAdapterPosition()).getTitle());
                     modIntent.putExtra("content", recyclerItems.get(getBindingAdapterPosition()).getContent());
                     modIntent.putExtra("URI", recyclerItems.get(getBindingAdapterPosition()).getURI());
+                    modIntent.putExtra("id", recyclerItems.get(getBindingAdapterPosition()).getId());
 
                     context.startActivity(modIntent);;
                 }

@@ -12,14 +12,16 @@ public class RecyclerItem extends RealmObject {
     private String title; // 제목
     private String content; // 내용
     private String URI;
+    private int id;
 
     public RecyclerItem() {
     }
 
-    public RecyclerItem(String title, String content, String URI) {
+    public RecyclerItem(String title, String content, String URI, int id) {
         this.title = title;
         this.content = content;
         this.URI = URI;
+        this.id = id;
     }
 
 
@@ -45,5 +47,13 @@ public class RecyclerItem extends RealmObject {
 
     public void setURI(String URI) {
         this.URI = URI;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 }
