@@ -1,53 +1,48 @@
 package com.casproject.casnotepad;
 
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.FileProvider;
-
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
+
 import com.bumptech.glide.Glide;
 import com.casproject.casnotepad.Recycler.RecyclerItem;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
 import java.text.SimpleDateFormat;
-import java.util.BitSet;
 import java.util.Date;
 
 import io.realm.Realm;
 
 public class ModNotepadActivity extends AppCompatActivity {
+    private static final int PICK_FROM_CAMERA = 0;
+    private static final int PICK_FROM_ALBUM = 1;
     private String mTitle, mContent, mURI;
+    private int mId;
+    private String imagePath = null;
     private EditText mTitleText, mContentText;
     private Button editButton, cancelButton, deleteButton, cameraButton, galleryButton;
     private ImageView imageView;
     private Realm realm;
-    private int mId;
-    private static final int PICK_FROM_CAMERA = 0;
-    private static final int PICK_FROM_ALBUM = 1;
-    private String imagePath = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mod_notepad);
 
-        temp();
+        init();
 
         editButton.setOnClickListener(v -> {
             mEditButtonClick();
@@ -71,7 +66,7 @@ public class ModNotepadActivity extends AppCompatActivity {
 
     }
 
-    private void temp() {
+    private void init() {
         Intent intent = getIntent();
         mTitle = intent.getStringExtra("title").toString();
         mContent = intent.getStringExtra("content").toString();
@@ -90,6 +85,7 @@ public class ModNotepadActivity extends AppCompatActivity {
         mTitleText.setText(mTitle);
         mContentText.setText(mContent);
 
+        // URI 없으면 이미지 로드 안함
         if (mURI != null) {
             Uri uri = Uri.parse(mURI);
             Glide.with(this).load(uri).into(imageView);
@@ -102,11 +98,11 @@ public class ModNotepadActivity extends AppCompatActivity {
     private void mEditButtonClick() {
         realm = Realm.getDefaultInstance();
 
+        // ID 찾아서 값 변경
         realm.executeTransaction(r -> {
             RecyclerItem recyclerItem = realm.where(RecyclerItem.class).equalTo("id", mId).findFirst();
             recyclerItem.setTitle(mTitleText.getText().toString());
             recyclerItem.setContent(mContentText.getText().toString());
-            Log.d("HERE@@ 2 : ", imagePath);
             recyclerItem.setURI(imagePath);
             Toast.makeText(getApplicationContext(), "EDIT", Toast.LENGTH_SHORT).show();
 
@@ -124,6 +120,7 @@ public class ModNotepadActivity extends AppCompatActivity {
     private void mDeleteButtonClick() {
         realm = Realm.getDefaultInstance();
 
+        // ID 찾아서 삭제
         realm.executeTransaction(r -> {
             RecyclerItem recyclerItem = realm.where(RecyclerItem.class).equalTo("title", mTitle).findFirst();
             if (recyclerItem.isValid()) {
@@ -152,13 +149,14 @@ public class ModNotepadActivity extends AppCompatActivity {
         dispatchTakePictureIntent();
     }
 
-    // 갤러리 ㅂ튼
+    // 갤러리 버튼
     private void mGalleryButtonClick() {
         Intent intent = new Intent(Intent.ACTION_PICK);
         intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
         startActivityForResult(intent, PICK_FROM_ALBUM);
     }
 
+    // 이미지 파일로 생성
     private File createImageFile() throws IOException {
         // Create an image file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
@@ -175,6 +173,7 @@ public class ModNotepadActivity extends AppCompatActivity {
         return image;
     }
 
+    // 카메라 Intent
     private void dispatchTakePictureIntent() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         // Ensure that there's a camera activity to handle the intent
@@ -198,6 +197,7 @@ public class ModNotepadActivity extends AppCompatActivity {
         }
     }
 
+    // 사진 저장
     private void galleryAddPic() {
         Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
         File f = new File(imagePath);
@@ -210,18 +210,17 @@ public class ModNotepadActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == PICK_FROM_ALBUM && resultCode == RESULT_OK && data != null && data.getData() != null) {
 
+        // 앨범 선택 시 URI 저장 및 imageView 표시
+        if (requestCode == PICK_FROM_ALBUM && resultCode == RESULT_OK && data != null && data.getData() != null) {
             Uri selectedImageUri = data.getData();
             imageView.setImageURI(selectedImageUri);
-
             imagePath = selectedImageUri.toString();
-        } else if (requestCode == PICK_FROM_CAMERA && resultCode == RESULT_OK) {
+        }
+        // 카메라 선택 시 사진 저장 후 imageView 표시
+        else if (requestCode == PICK_FROM_CAMERA && resultCode == RESULT_OK) {
             galleryAddPic();
-            Log.d("HERE@@ 1 : ", imagePath);
             imageView.setImageURI(Uri.parse(imagePath));
-
-            // uri1 = selectedImageUri.toString();
         }
     }
 }

@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +13,6 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.casproject.casnotepad.ModNotepadActivity;
-import com.casproject.casnotepad.NotepadActivity;
 import com.casproject.casnotepad.R;
 
 import java.util.List;
@@ -22,38 +20,6 @@ import java.util.List;
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder> {
     public Activity activity;
     private List<RecyclerItem> recyclerItems;
-
-    public class ViewHolder extends RecyclerView.ViewHolder {
-        TextView notepadTitle, notepadContent;
-
-        public ViewHolder(View view) {
-            super(view);
-
-            notepadTitle = view.findViewById(R.id.notepadTitle);
-            notepadContent = view.findViewById(R.id.notepadContent);
-
-            view.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Context context = view.getContext();
-                    Bundle bundle = new Bundle();
-                    bundle.putInt("id", getBindingAdapterPosition());
-
-                    Intent modIntent = new Intent(context, ModNotepadActivity.class);
-
-                    modIntent.putExtras(bundle);
-                    modIntent.putExtra("title", recyclerItems.get(getBindingAdapterPosition()).getTitle());
-                    modIntent.putExtra("content", recyclerItems.get(getBindingAdapterPosition()).getContent());
-                    modIntent.putExtra("URI", recyclerItems.get(getBindingAdapterPosition()).getURI());
-                    modIntent.putExtra("id", recyclerItems.get(getBindingAdapterPosition()).getId());
-
-                    context.startActivity(modIntent);;
-                }
-            });
-        }
-
-
-    }
 
     public RecyclerAdapter(Activity activity, List<RecyclerItem> recyclerItems) {
         this.activity = activity;
@@ -80,6 +46,33 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
         return recyclerItems.size();
     }
 
+    public class ViewHolder extends RecyclerView.ViewHolder {
+        TextView notepadTitle, notepadContent;
 
+        public ViewHolder(View view) {
+            super(view);
 
+            notepadTitle = view.findViewById(R.id.notepadTitle);
+            notepadContent = view.findViewById(R.id.notepadContent);
+
+            view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Context context = view.getContext();
+                    Bundle bundle = new Bundle();
+                    bundle.putInt("id", getBindingAdapterPosition());
+
+                    Intent modIntent = new Intent(context, ModNotepadActivity.class);
+
+                    modIntent.putExtras(bundle);
+                    modIntent.putExtra("title", recyclerItems.get(getBindingAdapterPosition()).getTitle());
+                    modIntent.putExtra("content", recyclerItems.get(getBindingAdapterPosition()).getContent());
+                    modIntent.putExtra("URI", recyclerItems.get(getBindingAdapterPosition()).getURI());
+                    modIntent.putExtra("id", recyclerItems.get(getBindingAdapterPosition()).getId());
+
+                    context.startActivity(modIntent);
+                }
+            });
+        }
+    }
 }

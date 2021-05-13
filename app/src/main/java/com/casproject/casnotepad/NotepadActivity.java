@@ -1,26 +1,18 @@
 package com.casproject.casnotepad;
 
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.FileProvider;
-
-import android.Manifest;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.casproject.casnotepad.Recycler.RecyclerItem;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,14 +22,12 @@ import java.util.Date;
 import io.realm.Realm;
 
 public class NotepadActivity extends AppCompatActivity {
-    private EditText titleText, contentText;
-    private Button saveButton, cancelButton, cameraButton, galleryButton;;
-    private ImageView imageView;
     private static final int PICK_FROM_CAMERA = 0;
     private static final int PICK_FROM_ALBUM = 1;
-    Realm realm;
-
-    String imagePath = null;
+    private String imagePath = null;
+    private EditText titleText, contentText;
+    private Button saveButton, cancelButton, cameraButton, galleryButton;
+    private ImageView imageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +55,7 @@ public class NotepadActivity extends AppCompatActivity {
     }
 
     private void init() {
+        // Binding
         titleText = findViewById(R.id.mEditTextTitle);
         contentText = findViewById(R.id.mEditTextContent);
         saveButton = findViewById(R.id.mButtonEdit);
@@ -74,6 +65,7 @@ public class NotepadActivity extends AppCompatActivity {
         imageView = findViewById(R.id.mImageView);
     }
 
+    // 저장 버튼
     private void saveButtonClick() {
         Intent save = new Intent(getApplicationContext(), MainActivity.class);
         save.putExtra("title", titleText.getText().toString());
@@ -86,6 +78,7 @@ public class NotepadActivity extends AppCompatActivity {
         finish();
     }
 
+    // 취소 버튼
     private void cancelButtonClick() {
         Toast.makeText(this, "CANCEL", Toast.LENGTH_SHORT).show();
 
@@ -106,8 +99,7 @@ public class NotepadActivity extends AppCompatActivity {
         startActivityForResult(intent, PICK_FROM_ALBUM);
     }
 
-
-
+    // 이미지 파일로 생성
     private File createImageFile() throws IOException {
         // Create an image file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
@@ -124,6 +116,7 @@ public class NotepadActivity extends AppCompatActivity {
         return image;
     }
 
+    // 카메라 Intent
     private void dispatchTakePictureIntent() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         // Ensure that there's a camera activity to handle the intent
@@ -147,6 +140,7 @@ public class NotepadActivity extends AppCompatActivity {
         }
     }
 
+    // 사진 저장
     private void galleryAddPic() {
         Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
         File f = new File(imagePath);
@@ -159,23 +153,17 @@ public class NotepadActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == PICK_FROM_ALBUM && resultCode == RESULT_OK && data != null && data.getData() != null) {
 
+        // 앨범 선택 시 URI 저장 및 imageView 표시
+        if (requestCode == PICK_FROM_ALBUM && resultCode == RESULT_OK && data != null && data.getData() != null) {
             Uri selectedImageUri = data.getData();
             imageView.setImageURI(selectedImageUri);
-
             imagePath = selectedImageUri.toString();
         }
+        // 카메라 선택 시 사진 저장 후 imageView 표시
         else if (requestCode == PICK_FROM_CAMERA && resultCode == RESULT_OK) {
             galleryAddPic();
-//            Log.d("HERE@@", data.getData().toString())
             imageView.setImageURI(Uri.parse(imagePath));
-
-            // uri1 = selectedImageUri.toString();
         }
     }
-
-
-
-
 }

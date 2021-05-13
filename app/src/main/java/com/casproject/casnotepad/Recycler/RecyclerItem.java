@@ -1,7 +1,5 @@
 package com.casproject.casnotepad.Recycler;
 
-import android.net.Uri;
-
 import io.realm.RealmObject;
 import io.realm.annotations.RealmClass;
 import io.realm.annotations.Required;
@@ -11,8 +9,8 @@ public class RecyclerItem extends RealmObject {
     @Required
     private String title; // 제목
     private String content; // 내용
-    private String URI;
-    private int id;
+    private String URI; // URI
+    private int id; // id
 
     public RecyclerItem() {
     }
@@ -23,7 +21,6 @@ public class RecyclerItem extends RealmObject {
         this.URI = URI;
         this.id = id;
     }
-
 
     public String getTitle() {
         return title;

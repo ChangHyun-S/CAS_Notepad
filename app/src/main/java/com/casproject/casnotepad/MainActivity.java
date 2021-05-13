@@ -1,20 +1,18 @@
 package com.casproject.casnotepad;
 
+import android.Manifest;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Bundle;
+
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.Manifest;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.net.Uri;
-import android.os.Bundle;
-import android.widget.Toast;
-
-import com.casproject.casnotepad.Recycler.RecyclerItem;
 import com.casproject.casnotepad.Recycler.RecyclerAdapter;
+import com.casproject.casnotepad.Recycler.RecyclerItem;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
@@ -25,23 +23,20 @@ import io.realm.RealmConfiguration;
 import io.realm.RealmResults;
 
 public class MainActivity extends AppCompatActivity {
-    Intent intent;
+    public List<RecyclerItem> list = new ArrayList<>();
     private Realm realm;
-
     private RecyclerItem recyclerItem;
     private RecyclerAdapter recyclerAdapter;
-
     private FloatingActionButton floatingAddButton;
     private RecyclerView recyclerView;
-
-    public List<RecyclerItem> list = new ArrayList<>();
+    Intent intent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        test();
+        init();
         permission();
 
         floatingAddButton.setOnClickListener(v -> {
@@ -50,12 +45,15 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void test() {
+    private void init() {
+        // Binding
         floatingAddButton = findViewById(R.id.notepadAdd);
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
+        // Realm
         Realm.init(this);
+        // UiThread true
         RealmConfiguration configuration = new RealmConfiguration.Builder()
                 .allowWritesOnUiThread(true)
                 .build();
@@ -64,27 +62,31 @@ public class MainActivity extends AppCompatActivity {
 
         RealmResults<RecyclerItem> realmResults = realm.where(RecyclerItem.class).findAllAsync();
 
+        // Recyclerview Adapter
         for (RecyclerItem recyclerItem : realmResults) {
             list.add(new RecyclerItem(recyclerItem.getTitle(), recyclerItem.getContent(), recyclerItem.getURI(), recyclerItem.getId()));
             recyclerAdapter = new RecyclerAdapter(this, list);
         }
         recyclerView.setAdapter(recyclerAdapter);
-
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-
+        // Intent -> DB
         if (resultCode == RESULT_OK) {
             String title = data.getStringExtra("title");
             String content = data.getStringExtra("content");
             String uri = data.getStringExtra("URI");
 
             realm.beginTransaction();
+
+            // 메모 ID로 구분
             Number maxId = realm.where(RecyclerItem.class).max("id");
+            // ID 없으면 1, 있다면 + 1
             int id = maxId == null ? 1 : maxId.intValue() + 1;
+
             recyclerItem = realm.createObject(RecyclerItem.class);
             recyclerItem.setTitle(title);
             recyclerItem.setContent(content);
@@ -98,18 +100,17 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    // goto NotepadActivity
     private void startNotepad() {
         intent = new Intent(getApplicationContext(), NotepadActivity.class);
         startActivityForResult(intent, 1);
     }
 
+    // Chect Permission
     private void permission() {
         if (checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-        }
-        else {
+        } else {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
         }
     }
-
-
 }
