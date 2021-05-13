@@ -15,8 +15,6 @@ public class NotepadActivity extends AppCompatActivity {
     private Button saveButton;
     private Button cancelButton;
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
