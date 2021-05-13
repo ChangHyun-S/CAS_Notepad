@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         Realm.init(this);
-        realm = Realm.getDefaultInstance();
+        // realm = Realm.getDefaultInstance();
 
         floatingAddButton = findViewById(R.id.notepadAdd);
         floatingAddButton.setOnClickListener( v -> {

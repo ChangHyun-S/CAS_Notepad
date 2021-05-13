@@ -10,6 +10,9 @@ public class RecyclerItem extends RealmObject {
     private String title; // 제목
     private String content; // 내용
 
+    public RecyclerItem() {
+    }
+
     public RecyclerItem(String title, String content) {
         this.title = title;
         this.content = content;

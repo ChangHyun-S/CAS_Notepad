@@ -25,17 +25,15 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
         this.recyclerItems = recyclerItems;
     }
 
-    @org.jetbrains.annotations.NotNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull @org.jetbrains.annotations.NotNull ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.activity_notepad, parent, false);
         ViewHolder viewHolder = new ViewHolder(view);
         return null;
     }
 
-    @org.jetbrains.annotations.NotNull
     @Override
-    public void onBindViewHolder(@NonNull @org.jetbrains.annotations.NotNull RecyclerAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull RecyclerAdapter.ViewHolder holder, int position) {
         RecyclerItem recyclerItem = recyclerItems.get(position);
         holder.title.setText(recyclerItem.getTitle());
         holder.content.setText(recyclerItem.getContent());
