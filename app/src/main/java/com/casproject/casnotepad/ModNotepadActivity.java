@@ -1,5 +1,6 @@
 package com.casproject.casnotepad;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -16,6 +17,7 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
 
@@ -41,6 +43,7 @@ public class ModNotepadActivity extends AppCompatActivity {
     private ImageButton cameraButton, galleryButton;
     private ImageView imageView;
     private Realm realm;
+    AlertDialog.Builder builder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +73,7 @@ public class ModNotepadActivity extends AppCompatActivity {
     private void init() {
         Intent intent = getIntent();
         ActionBar actionBar = getSupportActionBar();
+        builder = new AlertDialog.Builder(this);
 
         mTitle = intent.getStringExtra("title");
         mContent = intent.getStringExtra("content");
@@ -101,6 +105,11 @@ public class ModNotepadActivity extends AppCompatActivity {
     // 수정하기
     private void mEditButtonClick() {
         Intent intent = new Intent(this, MainActivity.class);
+        String timeStamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+
+        if (TextUtils.isEmpty(imagePath)) {
+            imagePath = mURI;
+        }
 
         // 제목 비어있으면 저장 안함
         if (TextUtils.isEmpty(mTitleText.getText())) {
@@ -119,6 +128,7 @@ public class ModNotepadActivity extends AppCompatActivity {
                 recyclerItem.setTitle(mTitleText.getText().toString());
                 recyclerItem.setContent(mContentText.getText().toString());
                 recyclerItem.setURI(imagePath);
+                recyclerItem.setDate(timeStamp);
                 Toast.makeText(getApplicationContext(), "수정되었습니다", Toast.LENGTH_SHORT).show();
             });
 
@@ -131,7 +141,29 @@ public class ModNotepadActivity extends AppCompatActivity {
     }
 
     // 삭제하기
-    private void mDeleteButtonClick() {
+    public void mDeleteButtonClick() {
+        builder.setTitle("경고");
+        builder.setMessage("삭제 후에는 복구가 불가능합니다.\n삭제하시겠습니까?");
+
+        builder.setPositiveButton("예", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                deleteFuc();
+            }
+        });
+
+        builder.setNegativeButton("아니오", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+        builder.show();
+
+
+    }
+
+    private void deleteFuc() {
         realm = Realm.getDefaultInstance();
 
         // ID 찾아서 삭제

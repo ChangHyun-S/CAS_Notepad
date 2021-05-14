@@ -11,15 +11,17 @@ public class RecyclerItem extends RealmObject {
     private String content; // 내용
     private String URI; // URI
     private int id; // id
+    private String date;
 
     public RecyclerItem() {
     }
 
-    public RecyclerItem(String title, String content, String URI, int id) {
+    public RecyclerItem(String title, String content, String URI, int id, String date) {
         this.title = title;
         this.content = content;
         this.URI = URI;
         this.id = id;
+        this.date = date;
     }
 
     public String getTitle() {
@@ -52,5 +54,13 @@ public class RecyclerItem extends RealmObject {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
     }
 }

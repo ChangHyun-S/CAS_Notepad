@@ -74,6 +74,7 @@ public class NotepadActivity extends AppCompatActivity {
     // 저장 버튼
     private void saveButtonClick() {
         Intent save = new Intent(getApplicationContext(), MainActivity.class);
+        String timeStamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
 
         // 제목 비어있으면 저장 안함
         if (TextUtils.isEmpty(titleText.getText())) {
@@ -86,6 +87,7 @@ public class NotepadActivity extends AppCompatActivity {
             save.putExtra("title", titleText.getText().toString());
             save.putExtra("content", contentText.getText().toString());
             save.putExtra("URI", imagePath);
+            save.putExtra("date", timeStamp);
             setResult(RESULT_OK, save);
 
             Toast.makeText(this, "저장되었습니다", Toast.LENGTH_SHORT).show();

@@ -39,6 +39,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
         RecyclerItem dat = recyclerItems.get(position);
         holder.notepadTitle.setText(dat.getTitle());
         holder.notepadContent.setText(dat.getContent());
+        holder.notepadDate.setText(dat.getDate());
     }
 
     @Override
@@ -47,13 +48,14 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        TextView notepadTitle, notepadContent;
+        TextView notepadTitle, notepadContent, notepadDate;
 
         public ViewHolder(View view) {
             super(view);
 
             notepadTitle = view.findViewById(R.id.notepadTitle);
             notepadContent = view.findViewById(R.id.notepadContent);
+            notepadDate = view.findViewById(R.id.notepadDate);
 
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -69,6 +71,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
                     modIntent.putExtra("content", recyclerItems.get(getBindingAdapterPosition()).getContent());
                     modIntent.putExtra("URI", recyclerItems.get(getBindingAdapterPosition()).getURI());
                     modIntent.putExtra("id", recyclerItems.get(getBindingAdapterPosition()).getId());
+                    modIntent.putExtra("date", recyclerItems.get(getBindingAdapterPosition()).getDate());
 
                     context.startActivity(modIntent);
                 }

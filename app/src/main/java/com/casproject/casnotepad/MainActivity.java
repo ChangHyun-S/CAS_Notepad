@@ -64,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Recyclerview Adapter
         for (RecyclerItem recyclerItem : realmResults) {
-            list.add(new RecyclerItem(recyclerItem.getTitle(), recyclerItem.getContent(), recyclerItem.getURI(), recyclerItem.getId()));
+            list.add(new RecyclerItem(recyclerItem.getTitle(), recyclerItem.getContent(), recyclerItem.getURI(), recyclerItem.getId(), recyclerItem.getDate()));
             recyclerAdapter = new RecyclerAdapter(this, list);
         }
         recyclerView.setAdapter(recyclerAdapter);
@@ -77,9 +77,9 @@ public class MainActivity extends AppCompatActivity {
         // Intent -> DB
         if (resultCode == RESULT_OK) {
             String title = data.getStringExtra("title");
-
             String content = data.getStringExtra("content");
             String uri = data.getStringExtra("URI");
+            String date = data.getStringExtra("date");
 
             realm.beginTransaction();
 
@@ -93,13 +93,14 @@ public class MainActivity extends AppCompatActivity {
             recyclerItem.setContent(content);
             recyclerItem.setURI(uri);
             recyclerItem.setId(id);
+            recyclerItem.setDate(date);
+
             realm.commitTransaction();
 
-            list.add(new RecyclerItem(title, content, uri, id));
+            list.add(new RecyclerItem(title, content, uri, id, date));
             recyclerAdapter = new RecyclerAdapter(this, list);
             recyclerView.setAdapter(recyclerAdapter);
-        }
-        else if (resultCode == RESULT_CANCELED) {
+        } else if (resultCode == RESULT_CANCELED) {
             Toast.makeText(this, "제목이 없습니다", Toast.LENGTH_SHORT).show();
         }
     }
