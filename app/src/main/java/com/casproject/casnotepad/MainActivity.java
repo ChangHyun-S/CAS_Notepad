@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -22,6 +23,7 @@ import java.util.List;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 import io.realm.RealmResults;
+import io.realm.Sort;
 
 public class MainActivity extends AppCompatActivity {
     public List<RecyclerItem> list = new ArrayList<>();
@@ -60,7 +62,9 @@ public class MainActivity extends AppCompatActivity {
         Realm.setDefaultConfiguration(configuration);
         realm = Realm.getDefaultInstance();
 
-        RealmResults<RecyclerItem> realmResults = realm.where(RecyclerItem.class).findAllAsync();
+        RealmResults<RecyclerItem> realmResults = realm.where(RecyclerItem.class)
+                .sort("date", Sort.DESCENDING)
+                .findAllAsync();
 
         // Recyclerview Adapter
         for (RecyclerItem recyclerItem : realmResults) {
