@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,12 +25,12 @@ import io.realm.RealmResults;
 
 public class MainActivity extends AppCompatActivity {
     public List<RecyclerItem> list = new ArrayList<>();
+    Intent intent;
     private Realm realm;
     private RecyclerItem recyclerItem;
     private RecyclerAdapter recyclerAdapter;
     private FloatingActionButton floatingAddButton;
     private RecyclerView recyclerView;
-    Intent intent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,6 +78,7 @@ public class MainActivity extends AppCompatActivity {
         // Intent -> DB
         if (resultCode == RESULT_OK) {
             String title = data.getStringExtra("title");
+
             String content = data.getStringExtra("content");
             String uri = data.getStringExtra("URI");
 
@@ -97,6 +99,9 @@ public class MainActivity extends AppCompatActivity {
             list.add(new RecyclerItem(title, content, uri, id));
             recyclerAdapter = new RecyclerAdapter(this, list);
             recyclerView.setAdapter(recyclerAdapter);
+        }
+        else if (resultCode == RESULT_CANCELED) {
+            Toast.makeText(this, "제목이 없습니다", Toast.LENGTH_SHORT).show();
         }
     }
 

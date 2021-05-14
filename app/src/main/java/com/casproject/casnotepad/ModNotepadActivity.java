@@ -5,19 +5,23 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
 
 import com.bumptech.glide.Glide;
 import com.casproject.casnotepad.Recycler.RecyclerItem;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.io.File;
 import java.io.IOException;
@@ -33,7 +37,8 @@ public class ModNotepadActivity extends AppCompatActivity {
     private int mId;
     private String imagePath = null;
     private EditText mTitleText, mContentText;
-    private Button editButton, cancelButton, deleteButton, cameraButton, galleryButton;
+    private FloatingActionButton editButton, deleteButton;
+    private ImageButton cameraButton, galleryButton;
     private ImageView imageView;
     private Realm realm;
 
@@ -52,10 +57,6 @@ public class ModNotepadActivity extends AppCompatActivity {
             mDeleteButtonClick();
         });
 
-        cancelButton.setOnClickListener(v -> {
-            mCancelButtonClick();
-        });
-
         cameraButton.setOnClickListener(v -> {
             mCameraButtonClick();
         });
@@ -68,15 +69,18 @@ public class ModNotepadActivity extends AppCompatActivity {
 
     private void init() {
         Intent intent = getIntent();
+        ActionBar actionBar = getSupportActionBar();
+
         mTitle = intent.getStringExtra("title").toString();
         mContent = intent.getStringExtra("content").toString();
         mURI = intent.getStringExtra("URI");
         mId = intent.getIntExtra("id", 0);
 
+        actionBar.setTitle(mTitle);
+
         mTitleText = findViewById(R.id.mEditTextTitle);
         mContentText = findViewById(R.id.mEditTextContent);
         editButton = findViewById(R.id.mButtonEdit);
-        cancelButton = findViewById(R.id.mButtonCancel);
         deleteButton = findViewById(R.id.mButtonDelete);
         cameraButton = findViewById(R.id.mButtonCamera);
         galleryButton = findViewById(R.id.mButtonGallery);
@@ -96,24 +100,35 @@ public class ModNotepadActivity extends AppCompatActivity {
 
     // 수정하기
     private void mEditButtonClick() {
-        realm = Realm.getDefaultInstance();
-
-        // ID 찾아서 값 변경
-        realm.executeTransaction(r -> {
-            RecyclerItem recyclerItem = realm.where(RecyclerItem.class).equalTo("id", mId).findFirst();
-            recyclerItem.setTitle(mTitleText.getText().toString());
-            recyclerItem.setContent(mContentText.getText().toString());
-            recyclerItem.setURI(imagePath);
-            Toast.makeText(getApplicationContext(), "EDIT", Toast.LENGTH_SHORT).show();
-
-        });
-
-        realm.close();
         Intent intent = new Intent(this, MainActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivityForResult(intent, 1);
 
-        finish();
+        // 제목 비어있으면 저장 안함
+        if (TextUtils.isEmpty(mTitleText.getText())) {
+            setResult(RESULT_CANCELED, intent);
+            Toast.makeText(this, "저장되지 않음", Toast.LENGTH_SHORT).show();
+
+            finish();
+        }
+        else {
+
+            realm = Realm.getDefaultInstance();
+
+            // ID 찾아서 값 변경
+            realm.executeTransaction(r -> {
+                RecyclerItem recyclerItem = realm.where(RecyclerItem.class).equalTo("id", mId).findFirst();
+                recyclerItem.setTitle(mTitleText.getText().toString());
+                recyclerItem.setContent(mContentText.getText().toString());
+                recyclerItem.setURI(imagePath);
+                Toast.makeText(getApplicationContext(), "수정되었습니다", Toast.LENGTH_SHORT).show();
+
+            });
+
+            realm.close();
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivityForResult(intent, 1);
+
+            finish();
+        }
     }
 
     // 삭제하기
@@ -126,20 +141,13 @@ public class ModNotepadActivity extends AppCompatActivity {
             if (recyclerItem.isValid()) {
                 recyclerItem.deleteFromRealm();
             }
-            Toast.makeText(getApplicationContext(), "DELETE", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "삭제되었습니다", Toast.LENGTH_SHORT).show();
         });
 
         realm.close();
         Intent intent = new Intent(this, MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivityForResult(intent, 1);
-
-        finish();
-    }
-
-    // 취소하기
-    private void mCancelButtonClick() {
-        Toast.makeText(this, "CANCEL", Toast.LENGTH_SHORT).show();
 
         finish();
     }
@@ -204,7 +212,6 @@ public class ModNotepadActivity extends AppCompatActivity {
         Uri contentUri = Uri.fromFile(f);
         mediaScanIntent.setData(contentUri);
         this.sendBroadcast(mediaScanIntent);
-        Toast.makeText(this, "사진 저장됨", Toast.LENGTH_SHORT).show();
     }
 
     @Override

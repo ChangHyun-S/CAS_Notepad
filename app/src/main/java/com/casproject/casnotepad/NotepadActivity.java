@@ -5,14 +5,20 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.text.TextUtils;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.io.File;
 import java.io.IOException;
@@ -26,7 +32,8 @@ public class NotepadActivity extends AppCompatActivity {
     private static final int PICK_FROM_ALBUM = 1;
     private String imagePath = null;
     private EditText titleText, contentText;
-    private Button saveButton, cancelButton, cameraButton, galleryButton;
+    private FloatingActionButton saveButton;
+    private ImageButton cameraButton, galleryButton;
     private ImageView imageView;
 
     @Override
@@ -38,10 +45,6 @@ public class NotepadActivity extends AppCompatActivity {
 
         saveButton.setOnClickListener(v -> {
             saveButtonClick();
-        });
-
-        cancelButton.setOnClickListener(v -> {
-            cancelButtonClick();
         });
 
         cameraButton.setOnClickListener(v -> {
@@ -56,10 +59,13 @@ public class NotepadActivity extends AppCompatActivity {
 
     private void init() {
         // Binding
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setTitle("빈 메모장");
+
         titleText = findViewById(R.id.mEditTextTitle);
         contentText = findViewById(R.id.mEditTextContent);
         saveButton = findViewById(R.id.mButtonEdit);
-        cancelButton = findViewById(R.id.mButtonCancel);
         cameraButton = findViewById(R.id.mButtonCamera);
         galleryButton = findViewById(R.id.mButtonGallery);
         imageView = findViewById(R.id.mImageView);
@@ -68,28 +74,29 @@ public class NotepadActivity extends AppCompatActivity {
     // 저장 버튼
     private void saveButtonClick() {
         Intent save = new Intent(getApplicationContext(), MainActivity.class);
-        save.putExtra("title", titleText.getText().toString());
-        save.putExtra("content", contentText.getText().toString());
-        save.putExtra("URI", imagePath);
-        setResult(RESULT_OK, save);
 
-        Toast.makeText(this, "SAVE", Toast.LENGTH_SHORT).show();
+        // 제목 비어있으면 저장 안함
+        if (TextUtils.isEmpty(titleText.getText())) {
+            setResult(RESULT_CANCELED, save);
+            Toast.makeText(this, "저장되지 않음", Toast.LENGTH_SHORT).show();
 
-        finish();
-    }
+            finish();
+        }
+        else {
+            save.putExtra("title", titleText.getText().toString());
+            save.putExtra("content", contentText.getText().toString());
+            save.putExtra("URI", imagePath);
+            setResult(RESULT_OK, save);
 
-    // 취소 버튼
-    private void cancelButtonClick() {
-        Toast.makeText(this, "CANCEL", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "저장되었습니다", Toast.LENGTH_SHORT).show();
 
-        finish();
+            finish();
+        }
     }
 
     // 카메라 버튼
     private void mCameraButtonClick() {
         dispatchTakePictureIntent();
-//        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-//        startActivityForResult(intent, PICK_FROM_CAMERA);
     }
 
     // 갤러리 버튼
@@ -147,7 +154,6 @@ public class NotepadActivity extends AppCompatActivity {
         Uri contentUri = Uri.fromFile(f);
         mediaScanIntent.setData(contentUri);
         this.sendBroadcast(mediaScanIntent);
-        Toast.makeText(this, "사진 저장됨", Toast.LENGTH_SHORT).show();
     }
 
     @Override
