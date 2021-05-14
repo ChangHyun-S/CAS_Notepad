@@ -25,7 +25,7 @@ import io.realm.RealmResults;
 
 public class MainActivity extends AppCompatActivity {
     public List<RecyclerItem> list = new ArrayList<>();
-    Intent intent;
+    private Intent intent;
     private Realm realm;
     private RecyclerItem recyclerItem;
     private RecyclerAdapter recyclerAdapter;
@@ -43,7 +43,6 @@ public class MainActivity extends AppCompatActivity {
         floatingAddButton.setOnClickListener(v -> {
             startNotepad();
         });
-
     }
 
     private void init() {

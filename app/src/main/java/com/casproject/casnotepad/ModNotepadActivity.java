@@ -33,8 +33,8 @@ import io.realm.Realm;
 public class ModNotepadActivity extends AppCompatActivity {
     private static final int PICK_FROM_CAMERA = 0;
     private static final int PICK_FROM_ALBUM = 1;
-    private String mTitle, mContent, mURI;
     private int mId;
+    private String mTitle, mContent, mURI;
     private String imagePath = null;
     private EditText mTitleText, mContentText;
     private FloatingActionButton editButton, deleteButton;
@@ -71,8 +71,8 @@ public class ModNotepadActivity extends AppCompatActivity {
         Intent intent = getIntent();
         ActionBar actionBar = getSupportActionBar();
 
-        mTitle = intent.getStringExtra("title").toString();
-        mContent = intent.getStringExtra("content").toString();
+        mTitle = intent.getStringExtra("title");
+        mContent = intent.getStringExtra("content");
         mURI = intent.getStringExtra("URI");
         mId = intent.getIntExtra("id", 0);
 
@@ -120,7 +120,6 @@ public class ModNotepadActivity extends AppCompatActivity {
                 recyclerItem.setContent(mContentText.getText().toString());
                 recyclerItem.setURI(imagePath);
                 Toast.makeText(getApplicationContext(), "수정되었습니다", Toast.LENGTH_SHORT).show();
-
             });
 
             realm.close();
